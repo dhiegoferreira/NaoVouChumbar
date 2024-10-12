@@ -27,7 +27,7 @@ def parse_cell(cell_value):
             })
     return events
 
-def parse_schedul_1St(file_path):
+def parse_schedule_1St(file_path):
     wb = openpyxl.load_workbook(file_path)
     sheet = wb.active
     schedule = []
@@ -103,12 +103,12 @@ def parse_schedul_1St(file_path):
 
 def getScheduleByStudentYear(year):
     file_path = 'data.xlsx' #might to be fixed as a const value
-    schedule = parse_schedul_1St(file_path)
+    schedule = parse_schedule_1St(file_path)
     
     scheduleFiltered = []
     
     for event in schedule:
-        if event['studentYear'] == year:
+        if event['studentYear'] == year and event['description'] != "Feriado" and event['description'] != "Interrupção Letiva do Natal":
            scheduleFiltered.append(event)
             
             
@@ -119,13 +119,13 @@ def getScheduleByStudentYear(year):
 def main():
     
     
-    schedule = getScheduleByStudentYear(1)
+    schedule = getScheduleByStudentYear(2)
     
     
     #test
     for event in schedule:
-        if(event['description'] == "Feriado" or
-           event['description'] == "Interrupção Letiva do Natal"):
+        if( event['description'] != "Feriado" and
+           event['description'] != "Interrupção Letiva do Natal"):
             continue
         
         print(f"Date: {event['date'].strftime('%Y-%m-%d')}, "
