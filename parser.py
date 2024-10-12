@@ -32,7 +32,8 @@ def parse_schedul_1St(file_path):
     sheet = wb.active
     schedule = []
 
-
+    StartIndex1St = 11
+    
     for row in range(StartIndex1St, sheet.max_row + 1):
         week = sheet.cell(row, column=1).value #week number match with gisem
         
@@ -43,7 +44,8 @@ def parse_schedul_1St(file_path):
                 
                 nextWeekRow = sheet.cell(weekRowFrame+1, column=1).value #week number match with gisem
                 if nextWeekRow and isinstance(nextWeekRow, int):
-                    break
+                    if(row != weekRowFrame +1):
+                        break
                 
         
                 for day in DaysColumnInExcel:  # Monday to Saturday
@@ -65,44 +67,72 @@ def parse_schedul_1St(file_path):
                     studentYear = str(sheet.cell(indexStartDataFromYearStudent,1).value)
                     mightBeEvent = str(sheet.cell(indexStartDataFromYearStudent, column=day).value)
                     
+                    if(studentYear != ""):
+                        studentYearPrevious = studentYear
+                        for char in studentYearPrevious:
+                            if char.isdigit():
+                                studentYearPreviousInt = int(char)
+                        
+                    
+                    
                     if(studentYear in studentYears):
                         #add new event for in a row that contains the year student field
-                        if str.isalpha(mightBeEvent) and mightBeEvent != "" and mightBeEvent != "None":
-                            events = parse_cell(mightBeEvent)
-                            for event in events:
-                                schedule.append({
-                                    'date': dateFormmated,
-                                    'studentYear': studentYear,
-                                    'time': event['time'],
-                                    'description': event['description']
-                                })
-                        
-                        studentYearPrevious = studentYear
+                        if  mightBeEvent != "" and mightBeEvent != 'None' and   len(mightBeEvent) >4 :
+                            
+                            schedule.append({
+                                        'date': dateFormmated,
+                                        'studentYear': studentYearPreviousInt,
+                                        'description': mightBeEvent
+                                    })
+                            
                     else:
                         #just add events for this existing year
                         #add new event for in a row that contains the year student field
-                        if mightBeEvent != "" and mightBeEvent != "None":
-                            events = parse_cell(mightBeEvent)
-                            for event in events:
-                                schedule.append({
-                                    'date': dateFormmated,
-                                    'studentYear': studentYearPrevious,
-                                    'time': event['time'],
-                                    'description': event['description']
-                                })
+                        if mightBeEvent != "" and mightBeEvent != 'None' and  len(mightBeEvent) >4:
+                            schedule.append({
+                                        'date': dateFormmated,
+                                        'studentYear': studentYearPreviousInt,
+                                        'description': mightBeEvent
+                                    })
+                    
+                                
 
                                        
     return schedule
 
-def main():
-    file_path = 'data.xlsx'
+
+def getScheduleByStudentYear(year):
+    file_path = 'data.xlsx' #might to be fixed as a const value
     schedule = parse_schedul_1St(file_path)
     
+    scheduleFiltered = []
+    
     for event in schedule:
+        if event['studentYear'] == year:
+           scheduleFiltered.append(event)
+            
+            
+    return scheduleFiltered
+
+
+
+def main():
+    
+    
+    schedule = getScheduleByStudentYear(1)
+    
+    
+    #test
+    for event in schedule:
+        if(event['description'] == "Feriado" or
+           event['description'] == "Interrupção Letiva do Natal"):
+            continue
+        
         print(f"Date: {event['date'].strftime('%Y-%m-%d')}, "
               f"Year: {event['studentYear']}, "
-              f"Time: {event['time']}, "
               f"Description: {event['description']}")
+        
+    ##Send to googleapi -> google calendar
 
 if __name__ == "__main__":
     main()
