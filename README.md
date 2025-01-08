@@ -5,23 +5,26 @@
 
 - TechStack: Python
 
-- Simple script to get schedule information from Engenharia Informática course and send these information to Google Calendar
+Goal: Get schedule information from Engenharia Informática course and send these information to Google Calendar.
 
-- [ ] Get information from xslx, process using openpyxl
-- [ ] Testing using unittest
-- [ ] Create a UI with selectors with the following information:
+- [x] Get information from xslx, processing using openpyxl library.
+- [ ] Testing using unittest 
+- [ ] Create a UI with selectors with the following information (feat):
     - Student Year
     - Chairs
 
 
-- Structure
+- Structure:
+
+Event structure from xlsx
 ![eventStructure](/images/eventStructure.png)
 
-
+Create event using googleApi
 ![eventCreated](/images/eventCreated.png)
 
 
-- Calendar
+- Calendar Sync result:
+
 ![calendar](/images/googleCalendarResult.png)
 
 
